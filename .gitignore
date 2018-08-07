@@ -91,3 +91,10 @@ Temporary Items
 .apdisk
 
 # End of https://www.gitignore.io/api/osx,node
+
+# JetBrains IDE temporary
+.idea
+
+# Dependencies lock files
+package-lock.json
+yarn.lock

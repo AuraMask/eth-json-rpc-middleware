@@ -1,7 +1,7 @@
 const test = require('tape')
 const JsonRpcEngine = require('json-rpc-engine')
-const BlockTracker = require('eth-block-tracker')
-const EthQuery = require('eth-query')
+const BlockTracker = require('irc-block-tracker')
+const IrcQuery = require('irc-query')
 const GanacheCore = require('ganache-core')
 const pify = require('pify')
 const createBlockCacheMiddleware = require('../block-cache')
@@ -16,77 +16,77 @@ const createHitTrackerMiddleware = require('./util/createHitTrackerMiddleware')
 // block tags
 
 cacheTest('getBalance + undefined blockTag', {
-  method: 'eth_getBalance',
+  method: 'irc_getBalance',
   params: ['0x1234'],
 }, true)
 
 cacheTest('getBalance + latest blockTag', {
-  method: 'eth_getBalance',
+  method: 'irc_getBalance',
   params: ['0x1234', 'latest'],
 }, true)
 
 cacheTest('getBalance + pending blockTag', {
-  method: 'eth_getBalance',
+  method: 'irc_getBalance',
   params: ['0x1234', 'pending'],
 }, false)
 
 // blocks
 
 cacheTest('getBlockForNumber for latest then block 0', [{
-  method: 'eth_getBlockByNumber',
+  method: 'irc_getBlockByNumber',
   params: ['latest'],
 }, {
-  method: 'eth_getBlockByNumber',
+  method: 'irc_getBlockByNumber',
   params: ['0x0'],
 }], false)
 
 cacheTest('getBlockForNumber for latest then block 1', [{
-  method: 'eth_getBlockByNumber',
+  method: 'irc_getBlockByNumber',
   params: ['latest'],
 }, {
-  method: 'eth_getBlockByNumber',
+  method: 'irc_getBlockByNumber',
   params: ['0x1'],
 }], false)
 
 cacheTest('getBlockForNumber for 0 then block 1', [{
-  method: 'eth_getBlockByNumber',
+  method: 'irc_getBlockByNumber',
   params: ['0x0'],
 }, {
-  method: 'eth_getBlockByNumber',
+  method: 'irc_getBlockByNumber',
   params: ['0x1'],
 }], false)
 
 cacheTest('getBlockForNumber for block 0', [{
-  method: 'eth_getBlockByNumber',
+  method: 'irc_getBlockByNumber',
   params: ['0x0'],
 }, {
-  method: 'eth_getBlockByNumber',
+  method: 'irc_getBlockByNumber',
   params: ['0x0'],
 }], true)
 
 cacheTest('getBlockForNumber for block 1', [{
-  method: 'eth_getBlockByNumber',
+  method: 'irc_getBlockByNumber',
   params: ['0x1'],
 }, {
-  method: 'eth_getBlockByNumber',
+  method: 'irc_getBlockByNumber',
   params: ['0x1'],
 }], true)
 
 // storage
 
 cacheTest('getStorageAt for same block should cache', [{
-  method: 'eth_getStorageAt',
+  method: 'irc_getStorageAt',
   params: ['0x295a70b2de5e3953354a6a8344e616ed314d7251', '0x0', '0x1234'],
 }, {
-  method: 'eth_getStorageAt',
+  method: 'irc_getStorageAt',
   params: ['0x295a70b2de5e3953354a6a8344e616ed314d7251', '0x0', '0x1234'],
 }], true)
 
 cacheTest('getStorageAt for different block should not cache', [{
-  method: 'eth_getStorageAt',
+  method: 'irc_getStorageAt',
   params: ['0x295a70b2de5e3953354a6a8344e616ed314d7251', '0x0', '0x1234'],
 }, {
-  method: 'eth_getStorageAt',
+  method: 'irc_getStorageAt',
   params: ['0x295a70b2de5e3953354a6a8344e616ed314d7251', '0x0', '0x4321'],
 }], false)
 
@@ -97,51 +97,51 @@ cacheTest('getStorageAt for different block should not cache', [{
 // tx by hash
 
 // cacheTest('getTransactionByHash for transaction that doesn\'t exist', {
-//   method: 'eth_getTransactionByHash',
+//   method: 'irc_getTransactionByHash',
 //   params: ['0x00000000000000000000000000000000000000000000000000deadbeefcafe00'],
 // }, false)
 //
 // cacheTest('getTransactionByHash for transaction that\'s pending', {
-//   method: 'eth_getTransactionByHash',
+//   method: 'irc_getTransactionByHash',
 //   params: ['0x00000000000000000000000000000000000000000000000000deadbeefcafe01'],
 // }, false)
 
 // cacheTest('getTransactionByHash for mined transaction', {
-//   method: 'eth_getTransactionByHash',
+//   method: 'irc_getTransactionByHash',
 //   params: ['0x00000000000000000000000000000000000000000000000000deadbeefcafe02'],
 // }, true)
 
 // code
 
 // cacheTest('getCode for latest block, then for earliest block, should not return cached response on second request', [{
-//   method: 'eth_getCode',
+//   method: 'irc_getCode',
 //   params: ['0x1234', 'latest'],
 // }, {
-//   method: 'eth_getCode',
+//   method: 'irc_getCode',
 //   params: ['0x1234', 'earliest'],
 // }], false)
 //
 // cacheTest('getCode for a specific block, then for the one before it, should not return cached response on second request', [{
-//   method: 'eth_getCode',
+//   method: 'irc_getCode',
 //   params: ['0x1234', '0x3'],
 // }, {
-//   method: 'eth_getCode',
+//   method: 'irc_getCode',
 //   params: ['0x1234', '0x2'],
 // }], false)
 //
 // cacheTest('getCode for a specific block, then the one after it, should return cached response on second request', [{
-//   method: 'eth_getCode',
+//   method: 'irc_getCode',
 //   params: ['0x1234', '0x2'],
 // }, {
-//   method: 'eth_getCode',
+//   method: 'irc_getCode',
 //   params: ['0x1234', '0x3'],
 // }], true)
 //
 // cacheTest('getCode for an unspecified block, then for the latest, should return cached response on second request', [{
-//   method: 'eth_getCode',
+//   method: 'irc_getCode',
 //   params: ['0x1234'],
 // }, {
-//   method: 'eth_getCode',
+//   method: 'irc_getCode',
 //   params: ['0x1234', 'latest'],
 // }], true)
 

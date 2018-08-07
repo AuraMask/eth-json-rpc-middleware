@@ -1,17 +1,17 @@
-const traceTransaction = require('eth-tx-summary/trace-transaction')
+const traceTransaction = require('irc-tx-summary/trace-transaction');
 
-module.exports = createTraceTransactionMiddleware
+module.exports = createTraceTransactionMiddleware;
 
-function createTraceTransactionMiddleware ({ provider }) {
+function createTraceTransactionMiddleware({provider}) {
 
   return (req, res, next, end) => {
-    if (req.method !== 'debug_traceTransaction') return next()
-    const [ targetTx ] = req.params
+    if (req.method !== 'debug_traceTransaction') return next();
+    const [targetTx] = req.params;
     traceTransaction(provider, targetTx, (err, result) => {
-      if (err) return end(err)
-      res.result = result
-      end()
-    })
-  }
+      if (err) return end(err);
+      res.result = result;
+      end();
+    });
+  };
 
 }
