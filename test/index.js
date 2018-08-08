@@ -1,4 +1,4 @@
-require('./block-ref')
-require('./block-cache')
-require('./inflight-cache')
-require('./wallet')
+require('./block-ref');
+require('./block-cache');
+require('./inflight-cache');
+require('./wallet');
